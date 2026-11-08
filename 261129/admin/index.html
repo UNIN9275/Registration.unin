@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>사전등록 관리자 | 제190차 학술집담회</title>
+<style>
+:root{--bg:#f4f5f7;--card:#fff;--ink:#1f2530;--muted:#6b7280;--label:#3b4556;--line:#d5d9e0;--accent:#3b4a66;--err:#c0392b;--ok:#2f7d5b;--warn:#b7791f;--head:#eef0f4}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15181e;--card:#1e222a;--ink:#e8eaee;--muted:#9aa3b2;--label:#46536b;--line:#343a46;--accent:#5a6d92;--head:#262b35}}
+:root[data-theme="dark"]{--bg:#15181e;--card:#1e222a;--ink:#e8eaee;--muted:#9aa3b2;--label:#46536b;--line:#343a46;--accent:#5a6d92;--head:#262b35}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;line-height:1.5;font-size:14px}
+button,input,select{font:inherit;color:inherit}
+.wrap{max-width:1500px;margin:0 auto;padding:20px 16px 60px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px}
+.btn{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:9px 16px;font-weight:700;cursor:pointer;white-space:nowrap}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);font-weight:600}
+.btn:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #7aa2ff;outline-offset:2px}
+input[type=text],input[type=password],input[type=search],select{padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card)}
+/* 로그인 */
+#login{max-width:400px;margin:12vh auto 0}
+#login h1{font-size:20px;margin:0 0 4px}
+#login p{color:var(--muted);margin:0 0 16px}
+#login input{width:100%;margin-bottom:10px}
+#login .btn{width:100%;padding:12px}
+.err{color:var(--err);min-height:20px;margin-top:6px}
+/* 본 화면 */
+#app{display:none}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.bar h1{font-size:20px;margin:0}.bar h1 small{display:block;font-size:13px;color:var(--muted);font-weight:500}
+.bar .tools{display:flex;gap:8px;flex-wrap:wrap}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:12px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.stat span{display:block;color:var(--muted);font-size:13px}.stat b{font-size:24px}.stat small{color:var(--muted);margin-left:4px}
+.stat.w b{color:var(--warn)}.stat.o b{color:var(--ok)}.stat.x b{color:var(--muted)}
+.bytype{color:var(--muted);margin:0 0 14px;font-size:13px}
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.filters input[type=search]{flex:1 1 240px}
+.count{color:var(--muted);margin-left:auto}
+.tbl{overflow:auto;border:1px solid var(--line);border-radius:10px;background:var(--card);max-height:calc(100vh - 330px);min-height:240px}
+table{border-collapse:collapse;width:100%;min-width:1300px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle;white-space:nowrap}
+th{position:sticky;top:0;background:var(--head);font-weight:700;z-index:1;cursor:pointer;user-select:none}
+th.nosort{cursor:default}
+tr.cx td{color:var(--muted);text-decoration:line-through}tr.cx td.keep{text-decoration:none}
+td.num{text-align:right}
+td select{padding:5px 8px}
+td input.memo{width:180px;padding:5px 8px;border:1px solid transparent;border-radius:6px;background:transparent}
+td input.memo:hover,td input.memo:focus{border-color:var(--line);background:var(--card)}
+.st{display:inline-block;border-radius:999px;padding:1px 10px;font-size:12px;font-weight:700}
+.st-입금대기{background:#fdecc8;color:#7a4b00}.st-입금확인,.st-등록완료{background:#d7efe3;color:#1e5a40}.st-취소{background:#e3e5ea;color:#555}
+.empty{padding:40px;text-align:center;color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1f2530;color:#fff;padding:10px 18px;border-radius:8px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:60}
+.toast.show{opacity:1}
+.demo{background:#fff4cc;color:#4a3b00;border:1px solid #e6cf7a;border-radius:8px;padding:8px 12px;margin-bottom:12px}
+.printhead{display:none}
+@media (max-width:700px){.bar h1{font-size:18px}.stat b{font-size:20px}}
+@media print{
+ body{background:#fff;color:#000;font-size:11px}
+ .bar .tools,.filters,.stats,.bytype,.demo,#login,.toast,.noprint{display:none!important}
+ .printhead{display:block;margin-bottom:8px}
+ .tbl{max-height:none;overflow:visible;border:0}
+ table{min-width:0}
+ th{position:static;background:#eee}
+ th,td{padding:4px 6px;white-space:normal}
+ td select{border:0;appearance:none;padding:0}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="demo" id="demoBar" hidden>⚠️ 시험 모드 — 이 브라우저에 저장된 신청만 보입니다. 시험 모드 비밀번호: <b id="demoPw"></b></div>
+
+<form id="login" class="card">
+<h1>사전등록 관리자</h1>
+<p>제190차 대한소아청소년과학회 광주·전남지회 학술집담회</p>
+<label for="pw" style="display:block;margin-bottom:4px;font-weight:600">관리자 비밀번호</label>
+<input type="password" id="pw" autocomplete="current-password" required>
+<button class="btn" type="submit" id="loginBtn">들어가기</button>
+<div class="err" id="loginErr" role="alert"></div>
+</form>
+
+<div id="app">
+<div class="bar">
+<h1>사전등록 명단 <small>제190차 학술집담회 · 2026년 12월 8일(화) · 마감 11월 29일(일)</small></h1>
+<div class="tools"><button class="btn ghost" id="refresh" type="button">새로고침</button><button class="btn ghost" id="csv" type="button">엑셀(CSV) 받기</button><button class="btn ghost" id="print" type="button">명단 인쇄</button><a class="btn ghost" href="../" target="_blank" rel="noopener" style="text-decoration:none">홈페이지 열기</a><button class="btn ghost" id="logout" type="button">나가기</button></div>
+</div>
+<div class="printhead"><b>제190차 대한소아청소년과학회 광주·전남지회 학술집담회 사전등록 명단</b> · 출력 <span id="printAt"></span></div>
+<div class="stats" id="stats"></div>
+<p class="bytype" id="bytype"></p>
+<div class="filters">
+<input type="search" id="q" placeholder="성명·근무처·핸드폰·면허번호·등록번호 검색">
+<select id="fs"><option value="">상태 전체</option><option value="active">취소 제외</option><option>입금대기</option><option>입금확인</option><option>등록완료</option><option>취소</option></select>
+<select id="ft"><option value="">구분 전체</option><option>개원의</option><option>봉직의</option><option>수련병원</option><option>전공의</option></select>
+<select id="ff"><option value="">등록비 전체</option><option value="free">무료</option><option value="paid">유료</option></select>
+<span class="count" id="count"></span>
+</div>
+<div class="tbl"><table><thead><tr id="th"></tr></thead><tbody id="tb"></tbody></table></div>
+<p class="noprint" style="color:var(--muted);font-size:13px;margin-top:10px">· 상태를 바꾸면 바로 저장됩니다. 입금이 확인되면 「입금확인」으로 바꿔 주세요. · 메모는 칸을 벗어나면 저장됩니다. · 제목을 누르면 정렬됩니다.</p>
+</div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<script src="../config.js"></script>
+<script src="../api.js"></script>
+<script>
+(function(){
+var API=window.API,C=window.CONFIG;
+function $(id){return document.getElementById(id)}
+function won(n){return Number(n||0).toLocaleString('ko-KR')}
+function el(tag,txt,cls){var e=document.createElement(tag);if(txt!==undefined&&txt!==null)e.textContent=txt;if(cls)e.className=cls;return e}
+var pw='',rows=[],sortKey='at',sortDir=-1,tt;
+function toast(m){var t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(function(){t.classList.remove('show')},1800)}
+if(API.demo){$('demoBar').hidden=false;$('demoPw').textContent=C.DEMO_ADMIN_PW}
+
+var COLS=[['regNo','등록번호'],['at','등록일시'],['name','성명'],['type','구분'],['dues','연회비'],['senior','65세↑'],['org','근무처'],['tel','핸드폰'],['mail','이메일'],['lic','면허번호'],['fee','등록비'],['payer','입금자'],['paydate','입금예정일'],['status','상태'],['memo','메모']];
+var CSVCOLS=COLS.concat([['updated','변경일시'],['agree','개인정보동의']]);
+
+function login(p){
+  $('loginBtn').disabled=true;$('loginErr').textContent='';
+  return API.call('adminList',{pw:p}).then(function(r){
+    $('loginBtn').disabled=false;
+    if(!r||!r.ok){$('loginErr').textContent=(r&&r.msg)||'들어가지 못했습니다.';try{sessionStorage.removeItem('kspAdm')}catch(e){};return false}
+    pw=p;try{sessionStorage.setItem('kspAdm',p)}catch(e){}
+    rows=r.rows||[];$('login').style.display='none';$('app').style.display='block';render();return true;
+  });
+}
+$('login').addEventListener('submit',function(e){e.preventDefault();var p=$('pw').value;if(p)login(p)});
+try{var s=sessionStorage.getItem('kspAdm');if(s)login(s)}catch(e){}
+$('logout').onclick=function(){try{sessionStorage.removeItem('kspAdm')}catch(e){};pw='';rows=[];$('app').style.display='none';$('login').style.display='block';$('pw').value=''};
+$('refresh').onclick=function(){API.call('adminList',{pw:pw}).then(function(r){if(r&&r.ok){rows=r.rows;render();toast('새로 불러왔습니다')}else toast((r&&r.msg)||'불러오지 못했습니다')})};
+
+function filtered(){
+  var q=$('q').value.trim().toLowerCase(),qd=q.replace(/\D/g,''),fs=$('fs').value,ft=$('ft').value,ff=$('ff').value;
+  return rows.filter(function(r){
+    if(fs==='active'?r.status==='취소':(fs&&r.status!==fs))return false;
+    if(ft&&r.type!==ft)return false;
+    if(ff==='free'&&+r.fee>0)return false;if(ff==='paid'&&!(+r.fee>0))return false;
+    if(!q)return true;
+    var hay=[r.regNo,r.name,r.org,r.mail,r.lic,r.payer,r.memo].join(' ').toLowerCase();
+    return hay.indexOf(q)>=0||(qd.length>=3&&String(r.tel).replace(/\D/g,'').indexOf(qd)>=0);
+  }).sort(function(a,b){var x=a[sortKey]||'',y=b[sortKey]||'';if(sortKey==='fee'){x=+x;y=+y}return x<y?-sortDir:x>y?sortDir:0});
+}
+function render(){
+  var act=rows.filter(function(r){return r.status!=='취소'});
+  var paid=act.filter(function(r){return +r.fee>0}),conf=paid.filter(function(r){return r.status==='입금확인'});
+  var S=[['신청 (취소 제외)',act.length,'명',''],['무료 등록',act.length-paid.length,'명','o'],['입금 대기',paid.length-conf.length,'명','w'],['입금 확인',conf.length,'명','o'],['취소',rows.length-act.length,'명','x'],['입금 확인액',won(conf.reduce(function(s,r){return s+(+r.fee)},0)),'원',''],['미입금액',won(paid.filter(function(r){return r.status!=='입금확인'}).reduce(function(s,r){return s+(+r.fee)},0)),'원','w']];
+  var st=$('stats');st.textContent='';S.forEach(function(s){var d=el('div',null,'stat '+s[3]);d.appendChild(el('span',s[0]));d.appendChild(el('b',String(s[1])));d.appendChild(el('small',s[2]));st.appendChild(d)});
+  var by={};act.forEach(function(r){by[r.type]=(by[r.type]||0)+1});
+  var sen=act.filter(function(r){return r.senior==='예'}).length,due=act.filter(function(r){return r.dues==='연회비 납부'}).length;
+  $('bytype').textContent='구분: '+(API.TYPES.map(function(t){return t+' '+(by[t]||0)}).join(' · '))+'  |  연회비 납부 '+due+' · 만 65세 이상 '+sen;
+  var th=$('th');th.textContent='';COLS.forEach(function(c){var h=el('th',c[1]+(sortKey===c[0]?(sortDir>0?' ▲':' ▼'):''));h.onclick=function(){if(sortKey===c[0])sortDir=-sortDir;else{sortKey=c[0];sortDir=1}render()};th.appendChild(h)});
+  var list=filtered(),tb=$('tb');tb.textContent='';
+  $('count').textContent=list.length+'건 표시 / 전체 '+rows.length+'건';
+  if(!list.length){var tr=el('tr'),td=el('td',rows.length?'조건에 맞는 신청이 없습니다.':'아직 신청이 없습니다.','empty');td.colSpan=COLS.length;tr.appendChild(td);tb.appendChild(tr);return}
+  list.forEach(function(r){
+    var tr=el('tr',null,r.status==='취소'?'cx':'');
+    COLS.forEach(function(c){
+      var k=c[0],td=el('td');
+      if(k==='status'){td.className='keep';var sel=el('select');API.STATUSES.forEach(function(s){var o=el('option',s);o.value=s;if(s===r.status)o.selected=true;sel.appendChild(o)});sel.setAttribute('aria-label',r.name+' 상태');sel.className='st st-'+r.status;
+        sel.onchange=function(){var nv=sel.value;sel.disabled=true;API.call('adminUpdate',{pw:pw,regNo:r.regNo,status:nv}).then(function(x){sel.disabled=false;if(x&&x.ok){r.status=nv;render();toast(r.name+' → '+nv)}else{sel.value=r.status;toast((x&&x.msg)||'저장하지 못했습니다')}})};td.appendChild(sel)}
+      else if(k==='memo'){td.className='keep';var m=el('input');m.type='text';m.className='memo';m.value=r.memo||'';m.placeholder='메모';m.setAttribute('aria-label',r.name+' 메모');
+        m.onchange=function(){var nv=m.value;API.call('adminUpdate',{pw:pw,regNo:r.regNo,memo:nv}).then(function(x){if(x&&x.ok){r.memo=nv;toast('메모 저장')}else toast((x&&x.msg)||'저장하지 못했습니다')})};td.appendChild(m)}
+      else if(k==='fee'){td.className='num';td.textContent=+r.fee?won(r.fee):'무료'}
+      else td.textContent=r[k]||'';
+      tr.appendChild(td)});
+    tb.appendChild(tr)});
+}
+['q','fs','ft','ff'].forEach(function(id){$(id).addEventListener('input',render)});
+
+$('csv').onclick=function(){
+  var list=filtered();
+  var esc=function(v){v=String(v==null?'':v);if(/^[=+\-@]/.test(v)&&v!=='-')v="'"+v;return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
+  var lines=[CSVCOLS.map(function(c){return c[1]}).join(',')].concat(list.map(function(r){return CSVCOLS.map(function(c){return esc(r[c[0]])}).join(',')}));
+  var blob=new Blob(['﻿'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'});
+  var d=new Date(),a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='사전등록명단_KSP202612_'+d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0')+'_V1.csv';
+  document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500);toast(list.length+'건을 받았습니다');
+};
+$('print').onclick=function(){$('printAt').textContent=new Date().toLocaleString('ko-KR');window.print()};
+})();
+</script>
+</body>
+</html>
